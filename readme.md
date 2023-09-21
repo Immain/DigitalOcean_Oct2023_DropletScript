@@ -2,7 +2,7 @@
 
 ## Change Summary
 
-- **2022:** Updated the way to retrieve the IP address from `item.data.ip_address` to `item.data.droplet.networks.v4.0.ip_address` for compatibility with the latest DigitalOcean API changes.
+- **2023:** Updated the way to retrieve the IP address from `item.data.ip_address` to `item.data.droplet.networks.v4.0.ip_address` for compatibility with the latest DigitalOcean API changes.
 
 ## Description
 
