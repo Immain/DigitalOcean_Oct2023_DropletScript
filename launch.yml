@@ -7,53 +7,49 @@
   vars_files:
     - ./group_vars/vars.yml
   tasks:
-  - name: add public ssh key to digitalocean account
-    digital_ocean_sshkey:
-      name: 
-      oauth_token: "{{ oauth_token }}"
-      ssh_pub_key: "{{ lookup('file', 'path/to/.ssh/id_rsa.pub') }}"
-      state: present
-    register: sshkey_result
+    - name: add public ssh key to digitalocean account
+      digital_ocean_sshkey:
+        name:
+        oauth_token: '{{ oauth_token }}'
+        ssh_pub_key: "{{ lookup('file', 'path/to/.ssh/id_rsa.pub') }}"
+        state: present
+      register: sshkey_result
 
-  - name: create a new droplet assigning the key
-    digital_ocean_droplet:
-      name: "{{ item }}"
-      oauth_token: "{{ oauth_token }}"
-      size_id: s-1vcpu-2gb-amd
-      region: sfo3
-      image: lamp-20-04
-      wait_timeout: 700
-      unique_name: yes
-      ssh_keys: ["{{ sshkey_result.data.ssh_key.id }}"]      
-      state: present
-    with_inventory_hostnames:
-      - web
-    register: droplet_result
+    - name: create a new droplet assigning the key
+      digital_ocean_droplet:
+        name: '{{ item }}'
+        oauth_token: '{{ oauth_token }}'
+        size_id: s-1vcpu-2gb-amd
+        region: sfo3
+        image: lamp-20-04
+        wait_timeout: 700
+        unique_name: yes
+        ssh_keys: ['{{ sshkey_result.data.ssh_key.id }}']
+        state: present
+      with_inventory_hostnames:
+        - web
+      register: droplet_result
 
-  - name: Save IP and hostname to local hosts file /etc/hosts
-    become: yes
-    lineinfile:
-      path: /etc/hosts
-      regexp: '.*{{ item.data.droplet.name }}$'
-      line: "{{ item.data.droplet.networks.v4.0.ip_address }} {{ item.data.droplet.name }}"
-    with_items: "{{ droplet_result.results }}"
+    - name: Save IP and hostname to local hosts file /etc/hosts
+      become: yes
+      lineinfile:
+        path: /etc/hosts
+        regexp: '.*{{ item.data.droplet.name }}$'
+        line: '{{ item.data.droplet.networks.v4.0.ip_address }} {{ item.data.droplet.name }}'
+      with_items: '{{ droplet_result.results }}'
 
-  - name: Pause for 2 Minutes to let Droplet load
-    pause:
-      minutes: 2
+    - name: Pause for 2 Minutes to let Droplet load
+      pause:
+        minutes: 2
 
-  - name: Wait for SSH to come up
-    wait_for:
-      host: "{{ droplet_result.results[0].data.droplet.networks.v4.0.ip_address  }}"
-      port: 22
-      delay: 60
-      timeout: 320
-      state: started
+    - name: Wait for SSH to come up
+      wait_for:
+        host: '{{ droplet_result.results[0].data.droplet.networks.v4.0.ip_address }}'
+        port: 22
+        delay: 60
+        timeout: 320
+        state: started
 
-- hosts: web
-  vars:
-    ansible_python_interpreter: /usr/bin/python3
-  tasks:
-# Ubuntu Update 
-  - name: Update and upgrade apt packages
-    apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: User Message
+      debug:
+        msg: 'Your new droplet IP address is: {{ droplet_result.results[0].data.droplet.networks.v4.0.ip_address }}'
