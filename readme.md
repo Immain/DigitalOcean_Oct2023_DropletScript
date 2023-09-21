@@ -3,6 +3,7 @@
 ## Change Summary
 
 - **2023:** Updated the way to retrieve the IP address from `item.data.ip_address` to `item.data.droplet.networks.v4.0.ip_address` for compatibility with the latest DigitalOcean API changes, which can be found [here](https://docs.digitalocean.com/reference/api/) and [here](https://docs.ansible.com/ansible/latest/collections/community/digitalocean/digital_ocean_droplet_module.html)
+- To change the image type, take a look at Digital Ocean's slug list [here](https://slugs.do-api.dev/)
 
 ## Description
 
