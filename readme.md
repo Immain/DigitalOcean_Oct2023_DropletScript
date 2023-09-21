@@ -7,7 +7,9 @@
 
 Description:
 This repository contains an updated script for managing DigitalOcean Droplets as of October 2023. It includes a critical modification to adapt to changes in the DigitalOcean API, specifically the retrieval of the Droplet's IP address. In 2022, the API used item.data.ip_address to obtain the IP address, but due to changes in the API structure, the correct method is now item.data.droplet.networks.v4.0.ip_address. This adjustment is essential for seamless operation with the latest DigitalOcean infrastructure.
-<br />
+
+
+
 Usage:
 To retrieve the IP address of a Droplet, you should use the following code snippet:
 ```
